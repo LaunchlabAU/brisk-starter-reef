@@ -22,6 +22,7 @@ export const build = siteBuild({
 export const {
   data,
   seo,
+  identity,
   postPrefix,
   sizeOf,
   rootFrom,
@@ -32,6 +33,9 @@ export const {
   routeOf,
   authorOf,
   longDate,
+  openingHours,
+  addressLines,
+  socialLinks,
   postsNewestFirst,
   siteImage,
 } = build;

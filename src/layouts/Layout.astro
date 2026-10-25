@@ -12,11 +12,17 @@ import {
   navigationLabel,
   routeOf,
   seo,
+  identity,
   rootFrom,
+  sizeOf,
+  openingHours,
+  addressLines,
+  socialLinks,
 } from '../data';
 // Every page of Reef: its head (search metadata, share image and structured
-// data, from the kit's SiteHead), the navigation from the site's
-// settings and the footer, on Reef's own styles and self-hosted fonts.
+// data, from the kit's SiteHead), the navigation, and the footer with the
+// site's settings (its details, where an editor gives them), on Reef's own
+// styles and self-hosted fonts.
 const { title, description, from, ogType, image, nodes, noindex } =
   Astro.props as {
     title: string;
@@ -33,6 +39,10 @@ const { title, description, from, ogType, image, nodes, noindex } =
 const base = rootFrom(from);
 // Navigation entries lead to the site's pages or to another website.
 const linkTo = linkValue(from);
+const hours = openingHours();
+const address = addressLines();
+const social = socialLinks();
+const contact = Boolean(identity.phone || identity.email || social.length);
 ---
 
 <!doctype html>
@@ -63,13 +73,24 @@ const linkTo = linkValue(from);
     <header class="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div class="container-page flex items-center justify-between gap-6 py-4">
         <a
-          class="font-display text-xl font-semibold tracking-tight"
+          class="min-w-0 wrap-break-word font-display text-xl font-semibold tracking-tight"
           href={base}
         >
-          {seo.siteName}
-          <span class="text-accent">.</span>
+          {identity.logo ? (
+            <img
+              class="h-8 w-auto object-contain object-left"
+              src={releaseUrl(identity.logo.asset, base)}
+              alt={identity.logo.alt}
+              {...sizeOf(identity.logo.asset)}
+            />
+          ) : (
+            <>
+              {identity.name}
+              <span class="text-accent">.</span>
+            </>
+          )}
         </a>
-        <div class="flex items-center gap-3">
+        <div class="flex shrink-0 items-center gap-3">
           <nav
             aria-label="Main navigation"
             class="hidden flex-wrap gap-1 text-sm md:flex"
@@ -113,18 +134,81 @@ const linkTo = linkValue(from);
     </main>
     <footer class="mt-24 border-t border-border bg-surface">
       <div class="container-page flex flex-col gap-4 py-12 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-        <a
-          class="font-display text-lg font-semibold text-foreground"
-          href={base}
-        >
-          {seo.siteName}
-          <span class="text-accent">.</span>
-        </a>
-        <p>{seo.summary}</p>
+        <div>
+          <a
+            class="font-display text-lg font-semibold text-foreground"
+            href={base}
+          >
+            {identity.name}
+            <span class="text-accent">.</span>
+          </a>
+          {identity.tagline && <p class="mt-1">{identity.tagline}</p>}
+        </div>
+        <p>{identity.footer ?? identity.summary}</p>
         <a class="underline-offset-4 hover:underline" href={`${base}rss.xml`}>
           Feed
         </a>
       </div>
+      {(address.length > 0 ||
+        hours.length > 0 ||
+        identity.hoursNote ||
+        contact) && (
+        <div class="container-page grid gap-8 border-t border-border py-10 text-sm text-muted-foreground md:grid-cols-3">
+          {address.length > 0 && (
+            <div>
+              <h2 class="mb-2 font-semibold text-foreground">Find us</h2>
+              <address class="not-italic">
+                {address.map((line) => (
+                  <p>{line}</p>
+                ))}
+              </address>
+            </div>
+          )}
+          {(hours.length > 0 || identity.hoursNote) && (
+            <div>
+              <h2 class="mb-2 font-semibold text-foreground">Opening hours</h2>
+              {hours.map((h) => (
+                <p>
+                  {h.days}: {h.opens}–{h.closes}
+                </p>
+              ))}
+              {identity.hoursNote && (
+                <p class={hours.length > 0 ? 'mt-2' : undefined}>
+                  {identity.hoursNote}
+                </p>
+              )}
+            </div>
+          )}
+          {contact && (
+            <div>
+              <h2 class="mb-2 font-semibold text-foreground">Get in touch</h2>
+              <address class="flex flex-col items-start gap-1 not-italic">
+                {identity.phone && (
+                  <a
+                    class="underline-offset-4 hover:underline"
+                    href={linkTo({ phone: identity.phone })}
+                  >
+                    {identity.phone}
+                  </a>
+                )}
+                {identity.email && (
+                  <a
+                    class="underline-offset-4 hover:underline"
+                    href={linkTo({ email: identity.email })}
+                  >
+                    {identity.email}
+                  </a>
+                )}
+                {social.map((s) => (
+                  <a class="underline-offset-4 hover:underline" href={s.url}>
+                    {s.label}
+                  </a>
+                ))}
+              </address>
+            </div>
+          )}
+        </div>
+      )}
     </footer>
   </body>
 </html>

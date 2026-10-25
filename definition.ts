@@ -1,6 +1,7 @@
 import { f, type LinkValue } from '@briskcms/kit/fields.js';
 import type { SiteDefinition } from '@briskcms/kit/site.js';
 import type { RichText } from '@briskcms/kit/rich-text.js';
+import type { Settings } from '@briskcms/kit/settings.js';
 
 // Reef: a blog theme by Aloha Pixel (MIT, upstream a92d845; see
 // UPSTREAM.md), onboarded with thin, prop-driven sections on its own
@@ -92,7 +93,7 @@ export type NavigationEntry =
   // Another website, under its own label.
   | { url: string; label: string };
 export type Content = {
-  version: 1;
+  version: 2;
   pages: Page[];
   posts: Post[];
   authors: Author[];
@@ -100,6 +101,8 @@ export type Content = {
   blog: { title: string; description: string };
   redirects: { from: string; to: string }[];
   gone: string[];
+  /** Who the site is and how to reach it (from content version 2). */
+  settings: Settings;
   collections: { topics: Topic[] };
 };
 
@@ -110,7 +113,11 @@ const paragraphs = (...texts: string[]): RichText =>
 export const reef: SiteDefinition = {
   id: 'reef',
   name: 'Reef (blog)',
-  contentVersion: 1,
+  // Version 2 keeps the site's name and details in its settings, where
+  // editors change them; version 1 gave them in seo. Nothing moves content
+  // from one to the other: content of version 1 moves by hand, to version
+  // 2 with its settings' name and summary.
+  contentVersion: 2,
   // Agency placeholders, drawn for this package (no upstream photographs).
   assets: [
     {
@@ -224,17 +231,11 @@ export const reef: SiteDefinition = {
   // files: brisk.json names anything else its pages may run or load
   // (other sites, inline scripts).
   security: { scripts: 'bundled', fonts: true },
-  seo: {
-    lang: 'en-AU',
-    timeZone: 'Australia/Sydney',
-    siteName: 'Reef',
-    organization: { name: 'Reef', sameAs: [] },
-    summary:
-      'Reef is a journal about building calm, durable websites: craft, design and the studio behind them.',
-    rssTitle: 'Reef journal',
-  },
+  // Its name and details are settings, which editors change.
+  settings: {},
+  seo: { lang: 'en-AU', timeZone: 'Australia/Sydney' },
   seed: {
-    version: 1,
+    version: 2,
     pages: [
       {
         slug: 'home',
@@ -393,6 +394,11 @@ export const reef: SiteDefinition = {
     },
     redirects: [],
     gone: [],
+    settings: {
+      name: 'Reef',
+      summary:
+        'Reef is a journal about building calm, durable websites: craft, design and the studio behind them.',
+    },
     collections: {
       topics: [
         {
