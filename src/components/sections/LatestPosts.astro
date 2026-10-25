@@ -1,0 +1,35 @@
+---
+import type { Section } from '../../../definition';
+import PostCard from '../PostCard.astro';
+import { linkFrom, postsNewestFirst } from '../../data';
+// The newest posts, as many as the section asks for.
+const { section, from } = Astro.props as {
+  section: Extract<Section, { type: 'latest-posts' }>;
+  from: string;
+};
+const posts = postsNewestFirst().slice(0, section.count);
+---
+
+{posts.length > 0 && (
+  <section class="container-page py-16">
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 class="font-display text-3xl font-semibold tracking-tight">
+          {section.heading}
+        </h2>
+        <p class="mt-2 text-muted-foreground">{section.intro}</p>
+      </div>
+      <a
+        class="text-sm font-medium underline-offset-4 hover:underline"
+        href={linkFrom(from)({ blog: true })}
+      >
+        All posts
+      </a>
+    </div>
+    <div class="grid gap-6 md:grid-cols-3">
+      {posts.map((post) => (
+        <PostCard post={post} from={from} />
+      ))}
+    </div>
+  </section>
+)}

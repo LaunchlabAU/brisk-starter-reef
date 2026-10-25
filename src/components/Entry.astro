@@ -1,0 +1,122 @@
+---
+import type { Page, Post } from '../../schema';
+import RichText from '@briskcms/astro/RichText.astro';
+import Layout from '../layouts/Layout.astro';
+import Hero from './sections/Hero.astro';
+import LatestPosts from './sections/LatestPosts.astro';
+import FeaturedPost from './sections/FeaturedPost.astro';
+import TopicStrip from './sections/TopicStrip.astro';
+import StudioNote from './sections/StudioNote.astro';
+import NewsletterInvite from './sections/NewsletterInvite.astro';
+import {
+  build,
+  authorOf,
+  linkFrom,
+  longDate,
+  releaseUrl,
+  rootFrom,
+  sizeOf,
+  toneClasses,
+  topicOf,
+} from '../data';
+// A page (its sections, opened by the hero), or a post at /blog/<slug>/: its
+// headline, summary, cover, topic and byline, then its rich-text body.
+const { page, from, post } = Astro.props as {
+  page: Page | Post;
+  from: string;
+  post?: boolean;
+};
+const base = rootFrom(from);
+const linkTo = linkFrom(from);
+const article = post ? (page as Post) : undefined;
+const hero = article
+  ? { heading: article.headline, body: article.summary, image: article.cover }
+  : (page as Page).sections.find((s) => s.type === 'hero')!;
+const author = article && authorOf(article.author);
+const nodes = build.entryNodes(page, from, post);
+---
+
+<Layout
+  title={page.title}
+  description={page.description}
+  from={from}
+  ogType={article ? 'article' : 'website'}
+  image={hero.image}
+  nodes={nodes}
+>
+  {article ? (
+    <article>
+      <header class="container-page grid gap-10 py-16 md:grid-cols-2 md:items-center">
+        <div class="flex flex-col gap-5">
+          <span
+            class:list={[
+              'w-fit rounded-full px-3 py-1 text-xs font-medium',
+              toneClasses[topicOf(article.topic).tone].chip,
+            ]}
+          >
+            {topicOf(article.topic).name}
+          </span>
+          <h1 class="font-display text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
+            {article.headline}
+          </h1>
+          <p class="text-lg text-muted-foreground">{article.summary}</p>
+          <p class="text-sm text-muted-foreground">
+            {author!.name}
+            {article.publishedAt && (
+              <>
+                {' · '}
+                <time datetime={article.publishedAt}>
+                  {longDate(article.publishedAt)}
+                </time>
+              </>
+            )}
+          </p>
+        </div>
+        <img
+          class="w-full rounded-3xl border border-border object-cover"
+          src={releaseUrl(article.cover.asset, base)}
+          alt={article.cover.alt}
+          {...sizeOf(article.cover.asset)}
+        />
+      </header>
+      {article.body.length > 0 && (
+        <div class="container-page">
+          <div class="prose mx-auto">
+            <RichText blocks={article.body} linkTo={linkTo} />
+          </div>
+        </div>
+      )}
+    </article>
+  ) : (
+    (page as Page).sections.map((s) =>
+      s.type === 'hero' ? (
+        <Hero section={s} from={from} />
+      ) : s.type === 'latest-posts' ? (
+        <LatestPosts section={s} from={from} />
+      ) : s.type === 'featured-post' ? (
+        <FeaturedPost section={s} from={from} />
+      ) : s.type === 'topic-strip' ? (
+        <TopicStrip section={s} from={from} />
+      ) : s.type === 'studio-note' ? (
+        <StudioNote section={s} />
+      ) : (
+        <NewsletterInvite section={s} from={from} />
+      ),
+    )
+  )}
+  {page.faqs.length > 0 && (
+    <section class="container-page py-16" id="faq">
+      <h2 class="font-display text-3xl font-semibold tracking-tight">
+        Questions, answered
+      </h2>
+      <div class="mt-6 divide-y divide-border rounded-3xl border border-border bg-card">
+        {page.faqs.map((f) => (
+          <details class="p-6">
+            <summary class="cursor-pointer font-medium">{f.question}</summary>
+            <p class="mt-3 text-muted-foreground">{f.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  )}
+</Layout>

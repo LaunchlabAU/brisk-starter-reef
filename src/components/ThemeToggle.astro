@@ -1,0 +1,37 @@
+---
+// Switches dark mode on and off (its pressed state says which), remembering
+// the choice for public/theme-init.js (Reef's ThemeToggle, rewritten
+// without upstream's view transitions). Its name never changes with it.
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  aria-pressed="false"
+  class="rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+>
+  Dark mode
+</button>
+
+<script>
+  const root = document.documentElement;
+  for (const button of document.querySelectorAll('[data-theme-toggle]')) {
+    const sync = () =>
+      button.setAttribute(
+        'aria-pressed',
+        String(root.classList.contains('dark')),
+      );
+    sync();
+    button.addEventListener('click', () => {
+      const dark = !root.classList.contains('dark');
+      root.classList.toggle('dark', dark);
+      root.style.colorScheme = dark ? 'dark' : 'light';
+      try {
+        localStorage.setItem('reef-theme', dark ? 'dark' : 'light');
+      } catch {
+        // Not remembered; the page still switches.
+      }
+      sync();
+    });
+  }
+</script>

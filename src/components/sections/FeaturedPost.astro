@@ -1,0 +1,18 @@
+---
+import type { Section } from '../../../definition';
+import PostCard from '../PostCard.astro';
+import { data } from '../../data';
+// One chosen post, shown large (the content schema keeps it published).
+const { section, from } = Astro.props as {
+  section: Extract<Section, { type: 'featured-post' }>;
+  from: string;
+};
+const post = data.posts.find((p) => p.slug === section.post.post)!;
+---
+
+<section class="container-page py-16">
+  <h2 class="mb-8 font-display text-3xl font-semibold tracking-tight">
+    {section.heading}
+  </h2>
+  <PostCard post={post} from={from} large />
+</section>

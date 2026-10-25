@@ -1,0 +1,50 @@
+---
+import type { Section } from '../../../definition';
+import { linkFrom, postsNewestFirst, toneClasses, topics } from '../../data';
+// The topics that have posts, each leading to its group on the blog index.
+const { section, from } = Astro.props as {
+  section: Extract<Section, { type: 'topic-strip' }>;
+  from: string;
+};
+const listed = postsNewestFirst();
+const filled = topics()
+  .map((topic) => ({
+    topic,
+    count: listed.filter((p) => p.topic === topic.slug).length,
+  }))
+  .filter(({ count }) => count > 0);
+const index = linkFrom(from)({ blog: true });
+---
+
+{filled.length > 0 && (
+  <section class="container-page py-16">
+    <h2 class="font-display text-3xl font-semibold tracking-tight">
+      {section.heading}
+    </h2>
+    <p class="mt-2 text-muted-foreground">{section.intro}</p>
+    <ul class="mt-8 grid gap-4 md:grid-cols-3">
+      {filled.map(({ topic, count }) => (
+        <li>
+          <a
+            class="flex h-full flex-col gap-3 rounded-3xl border border-border bg-card p-6 transition-colors hover:border-foreground/30"
+            href={`${index}#topic-${topic.slug}`}
+          >
+            <span class="flex items-center gap-2 font-display text-xl font-semibold">
+              <span
+                class:list={[
+                  'h-2.5 w-2.5 rounded-full',
+                  toneClasses[topic.tone].dot,
+                ]}
+              />
+              {topic.name}
+            </span>
+            <span class="text-muted-foreground">{topic.description}</span>
+            <span class="mt-auto text-sm text-muted-foreground">
+              {count} {count === 1 ? 'post' : 'posts'}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

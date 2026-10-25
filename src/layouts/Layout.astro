@@ -1,0 +1,130 @@
+---
+import '@fontsource-variable/instrument-sans';
+import '@fontsource-variable/space-grotesk';
+import '../styles/global.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import SiteHead from '@briskcms/astro/SiteHead.astro';
+import {
+  build,
+  data,
+  releaseUrl,
+  linkValue,
+  navigationLabel,
+  routeOf,
+  seo,
+  rootFrom,
+} from '../data';
+// Every page of Reef: its head (search metadata, share image and structured
+// data, from the kit's SiteHead), the navigation from the site's
+// settings and the footer, on Reef's own styles and self-hosted fonts.
+const { title, description, from, ogType, image, nodes, noindex } =
+  Astro.props as {
+    title: string;
+    description: string;
+    /** This page's route: a page slug, blog/<slug>, or the blog index. */
+    from: string;
+    ogType: 'website' | 'article';
+    image: { asset: string; alt: string };
+    /** This page's own structured data, beside the organisation and site. */
+    nodes: object[];
+    /** Kept out of search engines (an empty blog index). */
+    noindex?: boolean;
+  };
+const base = rootFrom(from);
+// Navigation entries lead to the site's pages or to another website.
+const linkTo = linkValue(from);
+---
+
+<!doctype html>
+<html lang={seo.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <!-- The reader's theme, set before the page paints (public/theme-init.js). -->
+    <script is:inline src={releaseUrl('theme-init.js', base)}></script>
+    <meta name="viewport" content="width=device-width" />
+    <SiteHead
+      build={build}
+      title={title}
+      description={description}
+      from={from}
+      ogType={ogType}
+      image={image}
+      nodes={nodes}
+      noindex={noindex}
+    />
+  </head>
+  <body class="bg-background font-sans text-foreground antialiased">
+    <a
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-card focus:px-4 focus:py-2"
+      href="#main"
+    >
+      Skip to content
+    </a>
+    <header class="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
+      <div class="container-page flex items-center justify-between gap-6 py-4">
+        <a
+          class="font-display text-xl font-semibold tracking-tight"
+          href={base}
+        >
+          {seo.siteName}
+          <span class="text-accent">.</span>
+        </a>
+        <div class="flex items-center gap-3">
+          <nav
+            aria-label="Main navigation"
+            class="hidden flex-wrap gap-1 text-sm md:flex"
+          >
+            {data.navigation.map((entry) => (
+              <a
+                class="rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-foreground aria-[current=page]:text-background"
+                href={linkTo(entry)}
+                aria-current={routeOf(entry) === from ? 'page' : undefined}
+              >
+                {navigationLabel(entry)}
+              </a>
+            ))}
+          </nav>
+          <ThemeToggle />
+          <!-- The menu on small screens: a disclosure, no script needed. -->
+          <details class="relative md:hidden">
+            <summary class="cursor-pointer list-none rounded-full border border-border px-3 py-1.5 text-sm">
+              Menu
+            </summary>
+            <nav
+              aria-label="Main navigation"
+              class="absolute right-0 z-50 mt-2 flex min-w-48 flex-col gap-1 rounded-2xl border border-border bg-card p-2 text-sm shadow-lg"
+            >
+              {data.navigation.map((entry) => (
+                <a
+                  class="rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-[current=page]:bg-foreground aria-[current=page]:text-background"
+                  href={linkTo(entry)}
+                  aria-current={routeOf(entry) === from ? 'page' : undefined}
+                >
+                  {navigationLabel(entry)}
+                </a>
+              ))}
+            </nav>
+          </details>
+        </div>
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="mt-24 border-t border-border bg-surface">
+      <div class="container-page flex flex-col gap-4 py-12 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+        <a
+          class="font-display text-lg font-semibold text-foreground"
+          href={base}
+        >
+          {seo.siteName}
+          <span class="text-accent">.</span>
+        </a>
+        <p>{seo.summary}</p>
+        <a class="underline-offset-4 hover:underline" href={`${base}rss.xml`}>
+          Feed
+        </a>
+      </div>
+    </footer>
+  </body>
+</html>

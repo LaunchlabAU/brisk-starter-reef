@@ -1,0 +1,42 @@
+---
+import type { Section } from '../../../definition';
+import { linkValue, releaseUrl, rootFrom, sizeOf } from '../../data';
+// Opens every page: the heading with its accent word, an introduction, an
+// image and a call to action.
+const { section, from } = Astro.props as {
+  section: Extract<Section, { type: 'hero' }>;
+  from: string;
+};
+const at = section.heading.toLowerCase().indexOf(section.accent.toLowerCase());
+const [before, word, after] =
+  at >= 0
+    ? [
+        section.heading.slice(0, at),
+        section.heading.slice(at, at + section.accent.length),
+        section.heading.slice(at + section.accent.length),
+      ]
+    : [section.heading, '', ''];
+---
+
+<section class="container-page grid gap-10 py-16 md:grid-cols-2 md:items-center md:py-24">
+  <div class="flex flex-col gap-6">
+    <h1 class="font-display text-5xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
+      {before}
+      <span class="text-accent">{word}</span>
+      {after}
+    </h1>
+    <p class="max-w-prose text-lg text-muted-foreground">{section.body}</p>
+    <a
+      class="w-fit rounded-full bg-foreground px-6 py-3 font-medium text-background transition-opacity hover:opacity-90"
+      href={linkValue(from)(section.cta)}
+    >
+      {section.ctaLabel}
+    </a>
+  </div>
+  <img
+    class="w-full rounded-3xl border border-border object-cover"
+    src={releaseUrl(section.image.asset, rootFrom(from))}
+    alt={section.image.alt}
+    {...sizeOf(section.image.asset)}
+  />
+</section>

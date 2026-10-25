@@ -1,0 +1,59 @@
+{
+  "title": "Reef — notes on building calm, durable websites",
+  "description": "A journal about the craft of the web: clear writing, durable markup, careful design and the studio that makes them.",
+  "sections": [
+    {
+      "id": "intro",
+      "type": "hero",
+      "heading": "Websites that stay calm under pressure.",
+      "accent": "calm",
+      "body": "Notes from a small studio on craft, design and the slow work of building pages that last.",
+      "image": {
+        "asset": "reef-hero.svg",
+        "alt": "Layered waves in turquoise and sand"
+      },
+      "cta": {
+        "blog": true
+      },
+      "ctaLabel": "Read the journal"
+    },
+    {
+      "id": "latest",
+      "type": "latest-posts",
+      "heading": "Latest notes",
+      "intro": "The newest writing from the studio.",
+      "count": 3
+    },
+    {
+      "id": "featured",
+      "type": "featured-post",
+      "heading": "Worth your time",
+      "post": {
+        "post": "writing-html-that-ages-well"
+      }
+    },
+    {
+      "id": "topics",
+      "type": "topic-strip",
+      "heading": "Topics",
+      "intro": "What we write about, and how often."
+    },
+    {
+      "id": "note",
+      "type": "studio-note",
+      "heading": "From the studio",
+      "body": "We write these notes for the people who look after websites day to day. If one saves you an afternoon, it has done its job.",
+      "signature": "The Reef team"
+    },
+    {
+      "id": "newsletter",
+      "type": "newsletter-invite",
+      "heading": "Follow along",
+      "body": "New notes appear every few weeks. Follow the feed in your reader of choice.",
+      "action": {
+        "feed": true
+      },
+      "actionLabel": "Subscribe to the feed"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+---
+import type { Section } from '../../../definition';
+// A short, signed note from the team.
+const { section } = Astro.props as {
+  section: Extract<Section, { type: 'studio-note' }>;
+};
+---
+
+<section class="container-page py-16">
+  <div class="mx-auto max-w-2xl rounded-3xl bg-surface p-10">
+    <h2 class="font-display text-3xl font-semibold tracking-tight">
+      {section.heading}
+    </h2>
+    <div class="prose mt-6">
+      {section.body.split(/\n\s*\n/).map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+    </div>
+    <p class="mt-6 font-display font-medium">{section.signature}</p>
+  </div>
+</section>

@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "version": 1,
+  "order": {
+    "pages": [
+      "home",
+      "about"
+    ]
+  },
+  "blog": {
+    "title": "The Reef journal — notes on calm, durable websites",
+    "description": "Every note from the Reef studio on craft, design and the work of building websites that last."
+  },
+  "navigation": [
+    {
+      "page": "home"
+    },
+    {
+      "page": "about"
+    },
+    {
+      "blog": true
+    }
+  ]
+}

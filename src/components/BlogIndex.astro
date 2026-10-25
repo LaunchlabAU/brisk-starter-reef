@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PostCard from './PostCard.astro';
+import {
+  build,
+  data,
+  postPrefix,
+  postsNewestFirst,
+  siteImage,
+  toneClasses,
+  topics,
+} from '../data';
+// The blog index at /<postPrefix>/: every post, newest first, grouped by
+// topic, each group with the anchor the topic strip links to.
+const from = postPrefix;
+const posts = postsNewestFirst();
+const groups = topics()
+  .map((topic) => ({
+    topic,
+    posts: posts.filter((p) => p.topic === topic.slug),
+  }))
+  .filter((g) => g.posts.length > 0);
+const nodes = build.blogNodes();
+---
+
+<Layout
+  title={data.blog.title}
+  description={data.blog.description}
+  from={from}
+  ogType="website"
+  image={siteImage()}
+  nodes={nodes}
+  noindex={posts.length === 0}
+>
+  <section class="container-page py-16">
+    <h1 class="font-display text-5xl font-semibold tracking-tight">
+      {data.blog.title.split(' — ')[0]}
+    </h1>
+    <p class="mt-4 max-w-2xl text-lg text-muted-foreground">
+      {data.blog.description}
+    </p>
+  </section>
+  {groups.map(({ topic, posts }) => (
+    <section class="container-page py-8" id={`topic-${topic.slug}`}>
+      <h2 class="flex items-center gap-2 font-display text-2xl font-semibold">
+        <span
+          class:list={['h-2.5 w-2.5 rounded-full', toneClasses[topic.tone].dot]}
+        />
+        {topic.name}
+      </h2>
+      <p class="mt-2 text-muted-foreground">{topic.description}</p>
+      <div class="mt-6 grid gap-6 md:grid-cols-3">
+        {posts.map((post) => (
+          <PostCard post={post} from={from} />
+        ))}
+      </div>
+    </section>
+  ))}
+</Layout>

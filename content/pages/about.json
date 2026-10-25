@@ -1,0 +1,28 @@
+{
+  "title": "About Reef — the studio behind the journal",
+  "description": "Who writes Reef: a small studio that builds calm, durable websites and writes down what it learns along the way.",
+  "sections": [
+    {
+      "id": "intro",
+      "type": "hero",
+      "heading": "A small studio with a long view.",
+      "accent": "long",
+      "body": "We build websites for teams who would rather not rebuild them every two years.",
+      "image": {
+        "asset": "reef-hero.svg",
+        "alt": "Layered waves in turquoise and sand"
+      },
+      "cta": {
+        "page": "home"
+      },
+      "ctaLabel": "Back to the journal"
+    },
+    {
+      "id": "note",
+      "type": "studio-note",
+      "heading": "How we work",
+      "body": "Plain markup, honest content and a design system small enough to keep in your head.",
+      "signature": "The Reef team"
+    }
+  ]
+}

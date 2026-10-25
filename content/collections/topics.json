@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "craft",
+    "name": "Craft",
+    "description": "The slow half of the job: naming things well and writing markup that survives the next redesign.",
+    "tone": "reef"
+  },
+  {
+    "slug": "design",
+    "name": "Design",
+    "description": "Type, colour and layout chosen on purpose, and explained in plain words.",
+    "tone": "coral"
+  },
+  {
+    "slug": "studio",
+    "name": "Studio",
+    "description": "How a small studio works: briefs, budgets and rhythm.",
+    "tone": "ink"
+  }
+]
